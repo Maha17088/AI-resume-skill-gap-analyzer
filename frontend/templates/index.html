@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSync AI</title>
+<link rel="stylesheet" href="/css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="screen-auth" class="screen active">
+  <div class="auth-wrap">
+    <div class="auth-logo">
+      <div class="logo-ring">🔍</div>
+      <h1>SkillSync AI</h1>
+      <p>Smart Resume Analysis · Skill Gap Tracker</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+      </div>
+      <div id="form-login" class="auth-form active">
+        <div class="fg"><label>EMAIL</label><input type="text" id="l-email" placeholder="you@example.com"/></div>
+        <div class="fg"><label>PASSWORD</label><input type="password" id="l-pw" placeholder="••••••••"/></div>
+        <button class="btn-auth" onclick="doLogin()">Login →</button>
+        <div class="auth-msg" id="l-err"></div>
+      </div>
+      <div id="form-register" class="auth-form">
+        <div class="fg"><label>FULL NAME</label><input type="text" id="r-name" placeholder="John Doe"/></div>
+        <div class="fg"><label>EMAIL</label><input type="text" id="r-email" placeholder="you@example.com"/></div>
+        <div class="fg">
+          <label>DEPARTMENT</label>
+          <select id="r-dept">
+            <option value="">-- Select Department --</option>
+            <option>Computer Science &amp; Engineering</option>
+            <option>Information Technology</option>
+            <option>Electronics &amp; Communication Engineering</option>
+            <option>Electrical &amp; Electronics Engineering</option>
+            <option>Mechanical Engineering</option>
+            <option>Civil Engineering</option>
+            <option>Artificial Intelligence &amp; Machine Learning</option>
+            <option>Data Science</option>
+            <option>Cybersecurity</option>
+            <option>Business Administration (MBA)</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>PASSWORD</label><input type="password" id="r-pw" placeholder="Min 6 characters"/></div>
+        <button class="btn-auth" onclick="doRegister()">Create Account →</button>
+        <div class="auth-msg" id="r-err"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="screen-app" class="screen">
+  <nav class="app-nav">
+    <div class="nav-brand"><div class="nb-icon">🔍</div>SkillSync AI</div>
+    <div class="nav-right">
+      <div class="nav-user"><div class="nav-avatar" id="nav-av">JS</div><span id="nav-nm">User</span></div>
+      <button class="btn-theme" id="btn-theme" onclick="toggleTheme()">🌙</button>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+  <div class="app-tabs">
+    <button class="app-tab active" id="tab-analyze" onclick="showTab('analyze')">📊 Analyze Resume</button>
+    <button class="app-tab" id="tab-tracker" onclick="showTab('tracker')">🎯 Skill Tracker <span class="tab-badge" id="bdg" style="display:none">0</span></button>
+    <button class="app-tab" id="tab-profile" onclick="showTab('profile')">👤 Profile &amp; Resume</button>
+  </div>
+  <div class="app-content">
+
+    <!-- ANALYZE -->
+    <div class="tab-panel active" id="panel-analyze">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">📄 Resume Analyzer</div>
+          <div class="form-row2">
+            <div class="fi"><label>🏢 COMPANY</label>
+              <select id="s-company">
+                <option value="">-- Select --</option>
+                <option>Google</option><option>Microsoft</option><option>Amazon</option>
+                <option>Infosys</option><option>TCS</option><option>Wipro</option>
+                <option>Accenture</option><option>IBM</option>
+              </select>
+            </div>
+            <div class="fi"><label>💼 JOB ROLE</label>
+              <select id="s-role">
+                <option value="">-- Select --</option>
+                <option>Software Developer</option><option>Data Scientist</option>
+                <option>Machine Learning Engineer</option><option>Full Stack Developer</option>
+                <option>DevOps Engineer</option><option>Business Analyst</option>
+                <option>Cloud Architect</option>
+              </select>
+            </div>
+          </div>
+          <div class="fi" style="margin-bottom:1rem"><label>📅 INTERVIEW DATE</label><input type="date" id="s-date"/></div>
+          <label class="upload-zone" for="res-file">
+            <div style="font-size:1.9rem;margin-bottom:.4rem">📄</div>
+            <div class="uz-sub"><span>Click to upload</span> or drag &amp; drop</div>
+            <div style="font-size:.74rem;color:var(--text3);margin-top:.2rem">Supports <strong style="color:var(--purple)">.pdf</strong> and .txt</div>
+            <div id="fname"></div>
+            <input type="file" id="res-file" accept=".pdf,.txt" style="display:none" onchange="onFile(this)"/>
+          </label>
+          <button class="btn-go" id="btn-go" onclick="runAnalysis()">🔍 Analyze My Resume</button>
+        </div>
+        <div class="card">
+          <div class="card-title">📋 Analysis Results</div>
+          <div id="res-empty" class="empty-s"><span class="ei">🤖</span><h3>Ready to Analyze</h3><p>Upload your resume and fill in the details to see your skill gap report.</p></div>
+          <div id="res-content" style="display:none">
+            <div class="res-box">
+              <div class="res-hdr">
+                <div><div class="res-title" id="rp-title">—</div><div style="font-size:.76rem;color:var(--text3);margin-top:.15rem" id="rp-sub">—</div></div>
+                <span class="elig" id="rp-elig">—</span>
+              </div>
+              <div class="pct-big" id="rp-pct">0%</div>
+              <div class="pct-bar"><div class="pct-fill" id="rp-bar" style="width:0%"></div></div>
+              <div style="font-size:.76rem;color:var(--text3)">Match Score</div>
+              <div class="sec-mini"><h4>✅ Matched Skills</h4><div class="pill-row" id="rp-matched"></div></div>
+              <div class="sec-mini"><h4>❌ Missing Skills</h4><div class="pill-row" id="rp-missing"></div></div>
+              <div class="sec-mini" id="rp-extra-w"><h4>📌 Other Skills Found</h4><div class="pill-row" id="rp-extra"></div></div>
+            </div>
+            <button class="btn-go" style="margin-top:1rem" onclick="saveToTracker()">🎯 Save to Skill Tracker</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACKER -->
+    <div class="tab-panel" id="panel-tracker">
+      <div id="trk-empty" class="empty-s"><span class="ei">🎯</span><h3>No Active Plan Yet</h3><p>Analyze your resume first, then save to Skill Tracker.</p></div>
+      <div id="trk-content" style="display:none;max-width:960px">
+        <div class="trk-hdr">
+          <div><h2 class="trk-title" id="trk-title">—</h2><div class="trk-sub" id="trk-sub">—</div></div>
+          <div class="dl-box">📅 <span id="trk-days" class="dl-num">—</span> days until interview</div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-c"><div class="stat-n sn-b" id="st-tot">0</div><div class="stat-l">Total Skills</div></div>
+          <div class="stat-c"><div class="stat-n sn-g" id="st-dn">0</div><div class="stat-l">Completed</div></div>
+          <div class="stat-c"><div class="stat-n sn-r" id="st-lf">0</div><div class="stat-l">Remaining</div></div>
+          <div class="stat-c"><div class="stat-n sn-o" id="st-pc">0%</div><div class="stat-l">Progress</div></div>
+        </div>
+        <div class="prog-wrap"><div id="prog-bar" class="prog-fill" style="width:0%"></div></div>
+        <div class="skills-list" id="sk-list"></div>
+        <div id="sug-banner" style="display:none" class="suggest-card">
+          <div class="sug-title">🤔 Deadline is Close!</div>
+          <div id="sug-text" class="sug-body"></div>
+          <div class="sug-btns">
+            <button class="btn-yes" onclick="acceptSuggest()">✅ Yes, Switch Role</button>
+            <button class="btn-no" onclick="document.getElementById('sug-banner').style.display='none'">❌ No, Keep Original</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="tab-panel" id="panel-profile">
+      <div class="prof-grid">
+        <div class="prof-card">
+          <div class="p-av" id="pr-av">JS</div>
+          <div class="p-name" id="pr-nm">—</div>
+          <div class="p-role" id="pr-role">No active application</div>
+          <div class="p-dept" id="pr-dept">—</div>
+          <div class="p-div"></div>
+          <div class="p-row"><span class="lbl">Email</span><span class="val" id="pr-em">—</span></div>
+          <div class="p-row"><span class="lbl">Company</span><span class="val" id="pr-co">—</span></div>
+          <div class="p-row"><span class="lbl">Interview Date</span><span class="val" id="pr-dt">—</span></div>
+          <div class="p-row"><span class="lbl">Match Score</span><span class="val" id="pr-mt">—</span></div>
+          <div class="p-row"><span class="lbl">Skills Learned</span><span class="val" id="pr-lrn">—</span></div>
+        </div>
+        <div class="prof-card">
+          <div class="card-title">📄 Updated Resume</div>
+          <div id="res-display"><div class="no-app-box">No resume yet. <a onclick="showTab('analyze')" style="cursor:pointer">Analyze first →</a></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ROLE SUGGEST -->
+<div class="m-ov" id="m-role-sug">
+  <div class="m-box">
+    <span class="m-emoji">💡</span>
+    <h2>Better Role Found!</h2>
+    <div class="m-sub" id="m-rs-sub">—</div>
+    <div class="m-detail" id="m-rs-detail"></div>
+    <div class="m-btns">
+      <button class="btn-yes" onclick="acceptRoleSuggest()">✅ Yes, Use This Role</button>
+      <button class="btn-no" onclick="closeM('m-role-sug')">❌ No, Keep My Role</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: QUIZ -->
+<div class="m-ov" id="m-quiz">
+  <div class="m-box"><div id="quiz-inner"></div></div>
+</div>
+
+<!-- MODAL: CONGRATS -->
+<div class="m-ov" id="m-congrats">
+  <div class="m-box" style="text-align:center">
+    <span class="m-emoji">🎉</span>
+    <h2>Congratulations!</h2>
+    <p class="m-sub">You've mastered all required skills! Your resume is fully updated. Go ace that interview!</p>
+    <div class="m-btns">
+      <button class="btn-green" onclick="downloadResume()">⬇️ Download Updated Resume</button>
+      <button class="btn-no" onclick="closeM('m-congrats')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
